@@ -1,8 +1,13 @@
 package com.project.register.controller;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,8 +32,18 @@ public class RegisterController {
 
 	}
 	
-	@GetMapping("/get")
-	public String get() {
-		return "hi";
-	}
+	 @GetMapping("/get/{id}")
+	    public ResponseEntity<RegModel> getUserById(@PathVariable Long id) {
+	        Optional<RegModel> user = service.getUserById(id);
+	        return user.map(ResponseEntity::ok)
+	                   .orElseGet(() -> ResponseEntity.notFound().build());
+	    }
+	 @GetMapping("/all")
+	    public ResponseEntity<List<RegModel>> getAllUsers() {
+	        List<RegModel> users = service.getAllUsers();
+	        if (users.isEmpty()) {
+	            return ResponseEntity.noContent().build();
+	        }
+	        return ResponseEntity.ok(users);
+	    }
 }
